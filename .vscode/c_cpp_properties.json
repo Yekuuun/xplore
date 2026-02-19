@@ -1,0 +1,24 @@
+{
+    "configurations": [
+        {
+            "name": "Linux",
+            "includePath": [
+                "${workspaceFolder}/**",
+                "/usr/src/linux-headers-6.1.0-42-amd64/include",
+                "/usr/src/linux-headers-6.1.0-42-amd64/arch/x86/include",
+                "/usr/src/linux-headers-6.1.0-42-amd64/arch/x86/include/generated",
+                "/usr/src/linux-headers-6.1.0-42-common/include",
+                "/usr/src/linux-headers-6.1.0-42-common/arch/x86/include"
+            ],
+            "defines": [
+                "__KERNEL__",
+                "MODULE",
+                "CONFIG_X86_64"
+            ],
+            "compilerPath": "/usr/bin/gcc",
+            "cStandard": "gnu11",
+            "intelliSenseMode": "linux-gcc-x64"
+        }
+    ],
+    "version": 4
+}
