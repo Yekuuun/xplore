@@ -10,6 +10,7 @@ links to the articles I used for all code samples & techniques.
 - https://docs.kernel.org/trace/kprobes.html
 - https://github.com/xcellerator/linux_kernel_hacking/issues/3#issuecomment-757951117
 - https://www.kernel.org/doc/html/v4.17/trace/ftrace-uses.html
+- https://syscalls64.paolostivanin.com/
 
 **Linux rootkit development :** 
 - https://xcellerator.github.io/posts/linux_rootkits_02/
