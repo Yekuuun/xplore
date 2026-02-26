@@ -8,12 +8,13 @@
  * 
  * @author Yekuuun
  */
-
-#ifndef  FTRACE_HELPER_H
-#define  FTRACE_HELPER_H
+#ifndef FTRACE_HELPER_H
+#define FTRACE_HELPER_H
 
 #include <linux/ftrace.h>
+#include <linux/kernel.h>
 #include <linux/linkage.h>
+#include <linux/module.h>
 #include <linux/slab.h>
 #include <linux/uaccess.h>
 #include <linux/version.h>
@@ -33,8 +34,8 @@
  */
 typedef struct ftrace_hook {
     const char *name;
-    void (*function)(void);
-    void (*original)(void);
+    void (*function);
+    void (*original);
 
     unsigned long address;
     struct ftrace_ops ops;
@@ -43,12 +44,12 @@ typedef struct ftrace_hook {
 /**
  * Utility function for settings ops attributes
  */
-#define HOOK(_name, _hook, _orig) \
-{                                 \
-    .name     = (_name),          \
-    .function = (_hook),          \
-    .original = (_orig),          \
-}                                 \
+#define HOOK(_name, _hook, _orig)  \
+{                                  \
+    .name     = (_name),           \
+    .function = (_hook),           \
+    .original = (_orig),           \
+}
 
 /**
  * We need to prevent recursive loops when hooking, otherwise the kernel will
@@ -73,7 +74,18 @@ typedef struct ftrace_hook {
 static inline void secure_zero_memory(void *s, size_t n)
 {
     memset(s, 0, n);
-    barrier_data(s);
+    
+    //special. Avoid using barrier_data() => deprecated.
+    __asm__ __volatile__("" : : "r"(s) : "memory");
 }
+
+
+/**
+ * Exported functions.
+*/
+void fh_remove_hook(pftrace_hook hook);
+int fh_install_hook(pftrace_hook hook);
+int fh_install_hooks(pftrace_hook hooks, size_t n);
+void fh_remove_hooks(pftrace_hook hooks, size_t n);
 
 #endif

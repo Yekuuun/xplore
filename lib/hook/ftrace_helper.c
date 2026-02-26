@@ -65,16 +65,22 @@ static int fh_resolve_hook_address(pftrace_hook hook) {
     return 0;
 }
 
+#if LINUX_VERSION_CODE >= KERNEL_VERSION(5,19,0)
+static void notrace fh_ftrace_thunk(unsigned long ip, unsigned long parent_ip, struct ftrace_ops *ops, struct ftrace_regs *fregs) {
+    pftrace_hook hook = container_of(ops, struct ftrace_hook, ops);
+    struct pt_regs *regs = ftrace_get_regs(fregs);
+
+    if (!within_module(parent_ip, THIS_MODULE))
+        regs->ip = (unsigned long)hook->function;
+}
+#else
 static void notrace fh_ftrace_thunk(unsigned long ip, unsigned long parent_ip, struct ftrace_ops *ops, struct pt_regs *regs) {
     pftrace_hook hook = container_of(ops, struct ftrace_hook, ops);
 
-#if USE_FENTRY_OFFSET
-    regs->ip = (unsigned long) hook->function;
-#else
-    if(!within_module(parent_ip, THIS_MODULE))
-        regs->ip = (unsigned long) hook->function;
-#endif
+    if (!within_module(parent_ip, THIS_MODULE))
+        regs->ip = (unsigned long)hook->function;
 }
+#endif
 
 /**
  * Assuming we've already set hook->name, hook->function and hook->original, we 
@@ -83,7 +89,7 @@ static void notrace fh_ftrace_thunk(unsigned long ip, unsigned long parent_ip, s
  * the built-in ftrace_set_filter_ip() and register_ftrace_function() functions
  * provided by ftrace.h
  */
-int fh_install_hook(pftrace_hook hook) {
+int fh_install_hook(pftrace_hook hook){
     int err;
 
     err = fh_resolve_hook_address(hook);
@@ -115,7 +121,8 @@ int fh_install_hook(pftrace_hook hook) {
 
     err = register_ftrace_function(&hook->ops);
     if(err){
-        pr_err("[!] Error calling ftrace_set_filter_ip() with code : %d \n", err);
+        pr_err("[!] Error calling register_ftrace_function() with code : %d \n", err);
+        ftrace_set_filter_ip(&hook->ops, hook->address, 1, 0); // cleanup du filtre
         return err;
     }
 
@@ -128,5 +135,39 @@ int fh_install_hook(pftrace_hook hook) {
  * opposite order to that in fh_install_hook()).
  */
 void fh_remove_hook(pftrace_hook hook){
-    // to do.
+    int err;
+
+    err = unregister_ftrace_function(&hook->ops);
+    if(err)
+        pr_err("[!] Error calling unregister_ftrace_function().\n");
+
+    err = ftrace_set_filter_ip(&hook->ops, hook->address, 1, 0);
+    if(err)
+        pr_err("[!] Error calling ftrace_set_filter_ip().\n");
+}
+
+int fh_install_hooks(pftrace_hook hooks, size_t n){
+    int err;
+    size_t i;
+
+    for(i = 0; i < n; i++){
+        err = fh_install_hook(&hooks[i]);
+        if(err)
+            goto CLEANUP;
+    }
+
+    return 0;
+
+CLEANUP:
+    while(i--)
+        fh_remove_hook(&hooks[i]);
+
+    return err;
+}
+
+void fh_remove_hooks(pftrace_hook hooks, size_t n){
+    size_t i;
+
+    for(i = 0; i < n; i++)
+        fh_remove_hook(&hooks[i]);
 }
