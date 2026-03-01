@@ -1,6 +1,18 @@
-# xplore
-exploring popular rootkit exploit techniques
+```C
+                                __  __      _                
+                                \ \/ /_ __ | | ___  _ __ ___ 
+                                 \  /| '_ \| |/ _ \| '__/ _ \
+                                 /  \| |_) | | (_) | | |  __/
+                                /_/\_\ .__/|_|\___/|_|  \___|
+                                     |_|                     
 
+                         -------Exploring linux rootkit techniques------
+
+```
+
+
+> [!Important]
+> This repository was created due to my interest for rootkits as an educational purpose only.
 
 ## Ressources : 
 
@@ -13,8 +25,8 @@ links to the articles I used for all code samples & techniques.
 - https://syscalls64.paolostivanin.com/
 
 **Linux rootkit development :** 
-- https://xcellerator.github.io/posts/linux_rootkits_02/
-- https://xcellerator.github.io/posts/linux_rootkits_11/
+- https://www.kernel.org/doc/html/v4.17/security/credentials.html
+- https://xcellerator.github.io/posts/linux_rootkits_01/
 
 **GCC macros :**
 - https://gcc.gnu.org/onlinedocs/cpp/Common-Predefined-Macros.html
