@@ -14,6 +14,16 @@
 > [!Important]
 > This repository was created due to my interest for rootkits as an educational purpose only.
 
+## Features :
+
+- 🟢 Syscall hooking
+- 🟢 Set root using creds abuse
+- 🟢 Char random & urandom read abuse
+...
+
+> [!Note]
+> Some of techniques use .h files you can find in /lib folder.
+
 ## Ressources : 
 
 links to the articles I used for all code samples & techniques.
@@ -22,6 +32,8 @@ links to the articles I used for all code samples & techniques.
 - https://docs.kernel.org/trace/kprobes.html
 - https://github.com/xcellerator/linux_kernel_hacking/issues/3#issuecomment-757951117
 - https://www.kernel.org/doc/html/v4.17/trace/ftrace-uses.html
+- https://syscalls64.paolostivanin.com/
+- https://github.com/torvalds/linux
 - https://syscalls64.paolostivanin.com/
 
 **Linux rootkit development :** 
