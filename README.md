@@ -19,6 +19,8 @@
 - 🟢 Syscall hooking
 - 🟢 Set root using creds abuse
 - 🟢 Char random & urandom read abuse
+- 🟢 Hiding current loaded module
+- 🟢 Hiding directories
 ...
 
 > [!Note]
@@ -35,6 +37,10 @@ links to the articles I used for all code samples & techniques.
 - https://syscalls64.paolostivanin.com/
 - https://github.com/torvalds/linux
 - https://syscalls64.paolostivanin.com/
+
+**Source code :** 
+- https://github.com/xcellerator/linux_kernel_hacking
+- https://github.com/MatheuZSecurity/Singularity
 
 **Linux rootkit development :** 
 - https://www.kernel.org/doc/html/v4.17/security/credentials.html
