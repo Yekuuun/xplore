@@ -6,7 +6,11 @@
 static struct kprobe kp = {
     .symbol_name = "kallsyms_lookup_name"
 };
+
 #endif
+
+typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
+static kallsyms_lookup_name_t kallsyms_lookup_name_fn = NULL;
 
 /**
  * Ftrace needs to know the address of the original function that we
@@ -15,29 +19,32 @@ static struct kprobe kp = {
  */
 static int fh_resolve_hook_address(pftrace_hook hook) {
 #ifdef KPROBE_LOOKUP
-
-    typedef unsigned long (*kallsyms_lookup_name_t)(const char *name);
-    kallsyms_lookup_name_t kallsyms_lookup_name;
     int err;
-    
-    err = register_kprobe(&kp);
-    if (err) {
-        pr_err("[!] register_kprobe failed: %d\n", err);
-        return err;
-    }
 
-    if (!kp.addr) {
-        pr_err("[!] kallsyms_lookup_name not resolved\n");
+    if (kallsyms_lookup_name_fn == NULL)
+    {
+        err = register_kprobe(&kp);
+        if (err) {
+            pr_err("[!] register_kprobe failed: %d\n", err);
+            return err;
+        }
+
+        if (!kp.addr) {
+            pr_err("[!] kallsyms_lookup_name not resolved\n");
+            unregister_kprobe(&kp);
+            return -ENOENT;
+        }
+
+        kallsyms_lookup_name_fn = (kallsyms_lookup_name_t)kp.addr;
         unregister_kprobe(&kp);
-        return -ENOENT;
     }
 
-    kallsyms_lookup_name = (kallsyms_lookup_name_t)kp.addr;
-    unregister_kprobe(&kp);
+    hook->address = kallsyms_lookup_name_fn(hook->name);
+#else
+
+    hook->address = kallsyms_lookup_name(hook->name);
 
 #endif
-    
-    hook->address = kallsyms_lookup_name(hook->name);
     if(!hook->address){
         pr_err("[!] kallsyms_lookup_name not resolved\n");
         return -ENOENT;
