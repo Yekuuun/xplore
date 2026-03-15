@@ -27,6 +27,8 @@
 
 > [!Note]
 > Some of techniques use .h files you can find in /lib folder.
+>
+> For some examples, you'll see only poc for linux kernel versions > 5.7. making it easier for testing purposes.
 
 ## Ressources : 
 
