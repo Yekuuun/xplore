@@ -21,6 +21,8 @@
 - 🟢 Char random & urandom read abuse
 - 🟢 Hiding current loaded module
 - 🟢 Hiding directories
+- 🟢 Hidding processes
+- 🟢 Hiding ports
 ...
 
 > [!Note]
